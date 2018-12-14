@@ -139,3 +139,31 @@ variable "bastion_allowed_remote_ips" {
   type = "list"
   default = ["0.0.0.0/0"]
 }
+
+variable "worker_allowed_ports" {
+  type = "list"
+  default = [
+    {
+      "protocol" = "tcp"
+      "port_range_min" = 30000
+      "port_range_max" = 32767
+      "remote_ip_prefix" = "0.0.0.0/0"
+    }
+  ]
+}
+
+variable "use_loadbalancer" {
+  default = 0
+}
+
+variable "loadbalancer_provider" {
+  default = "octavia"
+}
+
+variable "lb_listener_port" {
+    default = "443"
+}
+
+variable "lb_backend_listener_port" {
+    default = "6443"
+}
