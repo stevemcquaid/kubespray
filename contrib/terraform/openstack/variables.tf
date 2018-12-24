@@ -167,3 +167,11 @@ variable "lb_listener_port" {
 variable "lb_backend_listener_port" {
     default = "6443"
 }
+
+variable "kubespray_dir" {
+  default = ""
+}
+
+variable "inventory_dir" {
+  default = "contrib/terraform"
+}
