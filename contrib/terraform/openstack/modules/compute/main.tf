@@ -74,6 +74,18 @@ resource "openstack_networking_secgroup_rule_v2" "worker" {
   security_group_id = "${openstack_networking_secgroup_v2.worker.id}"
 }
 
+resource "openstack_compute_servergroup_v2" "etcd_aa_group" {
+  count    = "${var.etcd_anti_affinity == "true" ? 1 : 0}"
+  name     = "${var.cluster_name}-etcd-group"
+  policies = ["anti-affinity"]
+}
+
+resource "openstack_compute_servergroup_v2" "master_aa_group" {
+  count    = "${var.master_anti_affinity == "true" ? 1 : 0}"
+  name     = "${var.cluster_name}-master-group"
+  policies = ["anti-affinity"]
+}
+
 resource "openstack_compute_instance_v2" "bastion" {
   name       = "${var.cluster_name}-bastion-${count.index+1}"
   count      = "${var.number_of_bastions}"
@@ -114,6 +126,10 @@ resource "openstack_compute_instance_v2" "k8s_master" {
     name = "${var.network_name}"
   }
 
+  scheduler_hints {
+    group = "${join("", openstack_compute_servergroup_v2.master_aa_group.*.id)}"
+  }
+
   security_groups = ["${openstack_networking_secgroup_v2.k8s_master.name}",
     "${openstack_networking_secgroup_v2.bastion.name}",
     "${openstack_networking_secgroup_v2.k8s.name}",
@@ -143,6 +159,10 @@ resource "openstack_compute_instance_v2" "k8s_master_no_etcd" {
 
   network {
     name = "${var.network_name}"
+  }
+
+  scheduler_hints {
+    group = "${join("", openstack_compute_servergroup_v2.master_aa_group.*.id)}"
   }
 
   security_groups = ["${openstack_networking_secgroup_v2.k8s_master.name}",
@@ -175,6 +195,10 @@ resource "openstack_compute_instance_v2" "etcd" {
     name = "${var.network_name}"
   }
 
+  scheduler_hints {
+    group = "${join("", openstack_compute_servergroup_v2.etcd_aa_group.*.id)}"
+  }
+
   security_groups = ["${openstack_networking_secgroup_v2.k8s.name}",
     "${openstack_networking_secgroup_v2.k8s-global.name}",
   ]
@@ -197,6 +221,10 @@ resource "openstack_compute_instance_v2" "k8s_master_no_floating_ip" {
 
   network {
     name = "${var.network_name}"
+  }
+
+  scheduler_hints {
+    group = "${join("", openstack_compute_servergroup_v2.master_aa_group.*.id)}"
   }
 
   security_groups = ["${openstack_networking_secgroup_v2.k8s_master.name}",
@@ -223,6 +251,10 @@ resource "openstack_compute_instance_v2" "k8s_master_no_floating_ip_no_etcd" {
 
   network {
     name = "${var.network_name}"
+  }
+
+  scheduler_hints {
+    group = "${join("", openstack_compute_servergroup_v2.master_aa_group.*.id)}"
   }
 
   security_groups = ["${openstack_networking_secgroup_v2.k8s_master.name}",
