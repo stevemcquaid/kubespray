@@ -67,6 +67,10 @@ module "compute" {
   etcd_anti_affinity                           = "${var.etcd_anti_affinity}"
   master_anti_affinity                         = "${var.master_anti_affinity}"
   openstack_user_data                          = "${var.openstack_user_data}"
+  cluster_cidr                                 = "${var.cluster_cidr}"
+  service_cidr                                 = "${var.service_cidr}"
+  subnet_cidr                                  = "${var.subnet_cidr}"
+  real_network_id                              = "${module.network.network_id}"
 
 }
 
