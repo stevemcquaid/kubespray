@@ -162,7 +162,7 @@ resource "openstack_networking_port_v2" "k8s_master_no_etcd" {
   admin_state_up = "true"
   network_id     = "${var.real_network_id}"
 
-  security_groups_ids = ["${openstack_networking_secgroup_v2.k8s_master.id}",
+  security_group_ids = ["${openstack_networking_secgroup_v2.k8s_master.id}",
     "${openstack_networking_secgroup_v2.bastion.id}",
     "${openstack_networking_secgroup_v2.k8s.id}",
     "${openstack_networking_secgroup_v2.k8s-global.id}",
@@ -335,7 +335,7 @@ resource "openstack_networking_port_v2" "k8s_node_no_floating_ip" {
   admin_state_up = "true"
   network_id     = "${var.real_network_id}"
 
-  security_groups_ids = ["${openstack_networking_secgroup_v2.k8s.id}",
+  security_group_ids = ["${openstack_networking_secgroup_v2.k8s.id}",
     "${openstack_networking_secgroup_v2.worker.id}",
     "${openstack_networking_secgroup_v2.k8s-global.id}",
     "${data.openstack_networking_secgroup_v2.default.id}",
