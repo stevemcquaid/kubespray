@@ -169,13 +169,13 @@ resource "openstack_networking_port_v2" "k8s_master_no_etcd" {
     "${data.openstack_networking_secgroup_v2.default.id}",
   ]
 
-  allowed_address_pairs = {
-    ip_address = "${var.service_cidr}"
-  }
+  allowed_address_pairs = [
+    { ip_address = "${var.service_cidr}" },
+  ]
 
-  allowed_address_pairs = {
-    ip_address = "${var.cluster_cidr}"
-  }
+  allowed_address_pairs = [
+    { ip_address = "${var.cluster_cidr}" },
+  ]
 }
 
 resource "openstack_compute_instance_v2" "k8s_master_no_etcd" {
@@ -341,13 +341,13 @@ resource "openstack_networking_port_v2" "k8s_node_no_floating_ip" {
     "${data.openstack_networking_secgroup_v2.default.id}",
   ]
 
-  allowed_address_pairs = {
-    ip_address = "${var.service_cidr}"
-  }
+  allowed_address_pairs = [
+    { ip_address = "${var.service_cidr}" },
+  ]
 
-  allowed_address_pairs = {
-    ip_address = "${var.cluster_cidr}"
-  }
+  allowed_address_pairs = [
+    { ip_address = "${var.cluster_cidr}" },
+  ]
 }
 
 resource "openstack_compute_instance_v2" "k8s_node_no_floating_ip" {
