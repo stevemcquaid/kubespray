@@ -1,5 +1,5 @@
 provider "openstack" {
-  version = "1.5.0"
+  version = "1.15.1"
   use_octavia = "true"
 }
 
