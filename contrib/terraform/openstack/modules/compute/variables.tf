@@ -101,3 +101,5 @@ variable "service_cidr" {}
 variable "cluster_cidr" {}
 
 variable "real_network_id" {}
+
+variable "vip_subnet_id" {}

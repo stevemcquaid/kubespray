@@ -71,6 +71,7 @@ module "compute" {
   service_cidr                                 = "${var.service_cidr}"
   subnet_cidr                                  = "${var.subnet_cidr}"
   real_network_id                              = "${var.neutron_vlan_enabled != "0" ? module.network.vlan_network_id : module.network.vxlan_network_id }"
+  vip_subnet_id                                = "${module.network.subnet_id}"
 }
 
 module "loadbalancer" {

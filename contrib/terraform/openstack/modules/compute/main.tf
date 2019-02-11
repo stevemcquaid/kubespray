@@ -2,6 +2,10 @@ data "openstack_networking_secgroup_v2" "default" {
   name = "default"
 }
 
+data "openstack_networking_subnet_v2" "k8s_network_subnet" {
+  subnet_id  = "${var.vip_subnet_id}"
+}
+
 resource "openstack_compute_keypair_v2" "k8s" {
   name       = "kubernetes-${var.cluster_name}"
   public_key = "${chomp(file(var.public_key_path))}"
@@ -162,6 +166,10 @@ resource "openstack_networking_port_v2" "k8s_master_no_etcd" {
   admin_state_up = "true"
   network_id     = "${var.real_network_id}"
 
+  depends_on = [
+    "data.openstack_networking_subnet_v2.k8s_network_subnet"
+  ]
+
   security_group_ids = ["${openstack_networking_secgroup_v2.k8s_master.id}",
     "${openstack_networking_secgroup_v2.bastion.id}",
     "${openstack_networking_secgroup_v2.k8s.id}",
@@ -186,6 +194,10 @@ resource "openstack_compute_instance_v2" "k8s_master_no_etcd" {
   flavor_id  = "${var.flavor_k8s_master}"
   key_pair   = "${openstack_compute_keypair_v2.k8s.name}"
   user_data  = "${var.openstack_user_data}"
+
+  depends_on = [
+    "openstack_networking_port_v2.k8s_master_no_etcd"
+  ]
 
   network {
     port = "${element(openstack_networking_port_v2.k8s_master_no_etcd.*.id, count.index)}"
@@ -335,6 +347,10 @@ resource "openstack_networking_port_v2" "k8s_node_no_floating_ip" {
   admin_state_up = "true"
   network_id     = "${var.real_network_id}"
 
+  depends_on = [
+    "data.openstack_networking_subnet_v2.k8s_network_subnet"
+  ]
+
   security_group_ids = ["${openstack_networking_secgroup_v2.k8s.id}",
     "${openstack_networking_secgroup_v2.worker.id}",
     "${openstack_networking_secgroup_v2.k8s-global.id}",
@@ -358,6 +374,10 @@ resource "openstack_compute_instance_v2" "k8s_node_no_floating_ip" {
   flavor_id  = "${var.flavor_k8s_node}"
   key_pair   = "${openstack_compute_keypair_v2.k8s.name}"
   user_data  = "${var.openstack_user_data}"
+
+  depends_on = [
+    "openstack_networking_port_v2.k8s_node_no_floating_ip"
+  ]
 
   network {
     port = "${element(openstack_networking_port_v2.k8s_node_no_floating_ip.*.id, count.index)}"
