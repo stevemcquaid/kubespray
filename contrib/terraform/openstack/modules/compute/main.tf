@@ -179,9 +179,6 @@ resource "openstack_networking_port_v2" "k8s_master_no_etcd" {
 
   allowed_address_pairs = [
     { ip_address = "${var.service_cidr}" },
-  ]
-
-  allowed_address_pairs = [
     { ip_address = "${var.cluster_cidr}" },
   ]
 }
@@ -359,9 +356,6 @@ resource "openstack_networking_port_v2" "k8s_node_no_floating_ip" {
 
   allowed_address_pairs = [
     { ip_address = "${var.service_cidr}" },
-  ]
-
-  allowed_address_pairs = [
     { ip_address = "${var.cluster_cidr}" },
   ]
 }
